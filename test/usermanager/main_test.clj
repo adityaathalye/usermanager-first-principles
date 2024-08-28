@@ -15,4 +15,9 @@
                  (update :headers (fn [{:strs [Content-Type]}]
                                     {"Content-Type" Content-Type}))))
           "Server echoes back request information in body.")
+      (is (= {:status 404
+              :body "Not Found."}
+             (-> (http/post base-uri {:throw-exceptions false})
+                 (select-keys [:status :body])))
+          "Server rejects unsupported route pattern.")
       (.stop server))))

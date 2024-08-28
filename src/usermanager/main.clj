@@ -1,5 +1,6 @@
 (ns usermanager.main
-  (:require [ring.adapter.jetty :as adapter])
+  (:require [ring.adapter.jetty :as adapter]
+            [usermanager.router.core :as router])
   (:gen-class))
 
 (defn echo-handler
@@ -10,7 +11,12 @@
                  (:request-method request)
                  (:uri request))})
 
+(defn wrap-router
+  [handler]
+  (fn [request]
+    (router/router handler request)))
+
 (defn -main
   [& _args]
-  (adapter/run-jetty echo-handler
+  (adapter/run-jetty (wrap-router echo-handler)
                      {:port 3000 :join? false}))
