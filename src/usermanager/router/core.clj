@@ -1,6 +1,5 @@
 (ns usermanager.router.core
-  (:require [clojure.string :as s]
-            [usermanager.main :as um]))
+  (:require [clojure.string :as s]))
 
 ;; Routes as of this commit from seancorfield/usermanager-example:
 ;; https://github.com/seancorfield/usermanager-example/blob/2a9cf635cf255bf223486bc9e907a02435c7201c/src/usermanager/main.clj#L113
@@ -60,6 +59,7 @@
   (handler request))
 
 (comment
+  (require 'usermanager.main)
 
   (router usermanager.main/echo-handler
           {:request-method :get :uri "/"})
