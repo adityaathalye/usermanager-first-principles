@@ -1,0 +1,14 @@
+{:paths ["src" "classes" "resources"]
+ :deps
+ {org.clojure/clojure {:mvn/version "1.11.3"}
+  ring/ring-jetty-adapter {:mvn/version "1.12.1"}}
+ :aliases
+ {:dev {:extra-deps
+        {clj-http/clj-http {:mvn/version "3.12.3"}}}
+  :test {;; clj -X:dev:test # at the command line
+         :extra-paths ["test"]
+         :extra-deps
+         {io.github.cognitect-labs/test-runner {:git/tag "v0.5.1"
+                                                :git/sha "dfb30dd"}}
+         :main-opts ["-m" "cognitect.test-runner"]
+         :exec-fn cognitect.test-runner.api/test}}}
