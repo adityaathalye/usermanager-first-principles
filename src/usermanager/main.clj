@@ -1,5 +1,5 @@
 (ns usermanager.main
-  (:require [ring.adapter.jetty :as adapter]
+  (:require [usermanager.system.core :as system]
             [usermanager.router.core :as router])
   (:gen-class))
 
@@ -18,5 +18,12 @@
 
 (defn -main
   [& _args]
-  (adapter/run-jetty (wrap-router echo-handler)
-                     {:port 3000 :join? false}))
+  (system/start-server! (wrap-router echo-handler)))
+
+(comment
+  (system/start-server! (wrap-router #'echo-handler))
+  (system/stop-server!)
+
+  (require 'clojure.reflect)
+  (clojure.reflect/reflect (::system/server @system/global-system))
+  )
