@@ -32,6 +32,9 @@
   [component-key]
   (get-in @global-system [component-key :state]))
 
+(defn evict-component!
+  [component-key]
+  (swap! global-system dissoc component-key))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Server start/stop utilities

@@ -21,34 +21,37 @@
 
 (defn setup-teardown-server!
   [server-key f]
-  (system/set-config! server-key {:port (get-free-port!)
-                                  :join? false})
-  (println (format "\nRunning test with server config: %s\n"
-                   (system/get-config server-key)))
-  (system/start-server! (um/wrap-router um/echo-handler) server-key)
+
+  (println "Setting up component:" server-key)
+  (system/set-config!
+   server-key {:port (get-free-port!) :join? false})
+  (system/start-server!
+   (um/wrap-router um/echo-handler) server-key)
+
+  (println "Running test with config:" (system/get-config server-key))
   (f)
-  (system/stop-server! server-key))
+
+  (system/stop-server! server-key)
+  (system/evict-component! server-key)
+  (println "Stopped and evicted component:" server-key))
 
 (defn with-test-db
   [db-key f]
   (let [dbname (format "test/%s.sqlite3"
                        (-> db-key symbol str
                            (s/replace #"\.|/" "_")))]
-    ;; SETUP SYSTEM
-    (system/set-config! db-key
-                        {:dbtype "sqlite" :dbname dbname})
-
-    ;; SETUP DB
-    (println (format "\nCreating DB with config: %s\n"
-                     (system/get-config db-key)))
+    (println "Setting up component:" db-key)
+    (system/set-config! db-key {:dbtype "sqlite" :dbname dbname})
     (system/start-db! model/populate db-key)
 
-    (f) ; RUN TEST
+    (println "Running test with config:" (system/get-config db-key))
+    (f)
 
-    ;; TEARDOWN DB
     (system/stop-db! db-key)
-    (println (format "\nDeleting SQLite test file at: %s\n" dbname))
-    (io/delete-file dbname)))
+    (system/evict-component! db-key)
+    (println "Stopped and evicted component:" db-key)
+    (io/delete-file dbname)
+    (println "Deleted SQLite test DB:" dbname)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; HTTP utils
