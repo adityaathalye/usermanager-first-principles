@@ -3,8 +3,8 @@
             [usermanager.system.core :as system]
             [clojure.string :as s]
             [usermanager.model.user-manager :as model]
-            [next.jdbc :as jdbc]
-            [clojure.java.io :as io])
+            [clojure.java.io :as io]
+            [usermanager.router.core :as router])
   (:import (java.net ServerSocket)))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Configuration utils
@@ -26,7 +26,7 @@
   (system/set-config!
    server-key {:port (get-free-port!) :join? false})
   (system/start-server!
-   (um/wrap-router um/echo-handler) server-key)
+   (um/wrap-router router/router) server-key)
 
   (println "Running test with config:" (system/get-config server-key))
   (f)
