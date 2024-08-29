@@ -1,5 +1,6 @@
 (ns usermanager.router.core
-  (:require [clojure.string :as s]))
+  (:require [clojure.string :as s]
+            [usermanager.handlers.user :as handlers]))
 
 ;; Routes as of this commit from seancorfield/usermanager-example:
 ;; https://github.com/seancorfield/usermanager-example/blob/2a9cf635cf255bf223486bc9e907a02435c7201c/src/usermanager/main.clj#L113
@@ -21,42 +22,40 @@
 
 #_(def router nil) ; evaluate to reset defmulti after modifying dispatch function
 (defmulti router
-  (fn [_handler {:keys [request-method uri] :as _request}]
+  (fn [{:keys [request-method uri] :as _request}]
     [request-method (s/replace uri #"\d+" ":id")]))
 
 (defmethod router :default
-  [_handler _request]
-  {:status 404
-   :headers {}
-   :body "Not Found."})
+  [_request]
+  handlers/not-found)
 
 (defmethod router [:get "/"]
-  [handler request]
-  (handler request))
+  [_]
+  handlers/echo)
 
 (defmethod router [:delete "/user/delete/:id"]
-  [handler request]
-  (handler request))
+  [_]
+  handlers/echo)
 
 (defmethod router [:get "/user/form"]
-  [handler request]
-  (handler request))
+  [_]
+  handlers/echo)
 
 (defmethod router [:get "/user/form/:id"]
-  [handler request]
-  (handler request))
+  [_]
+  handlers/echo)
 
 (defmethod router [:get "/user/list"]
-  [handler request]
-  (handler request))
+  [_]
+  handlers/echo)
 
 (defmethod router [:post "/user/save"]
-  [handler request]
-  (handler request))
+  [_]
+  handlers/echo)
 
 (defmethod router [:get "/reset"]
-  [handler request]
-  (handler request))
+  [_]
+  handlers/echo)
 
 (comment
   (require 'usermanager.main)

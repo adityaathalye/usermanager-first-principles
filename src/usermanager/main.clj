@@ -1,27 +1,21 @@
 (ns usermanager.main
-  (:require [usermanager.system.core :as system]
-            [usermanager.router.core :as router])
-  (:gen-class))
-
-(defn echo-handler
-  [request]
-  {:status 200
-   :headers {"Content-Type" "text/plain;charset=utf-8"}
-   :body (format "echoing METHOD %s for PATH %s"
-                 (:request-method request)
-                 (:uri request))})
+  (:gen-class)
+  (:require
+   [usermanager.router.core :as router]
+   [usermanager.system.core :as system]))
 
 (defn wrap-router
-  [handler]
+  [router]
   (fn [request]
-    (router/router handler request)))
+    (let [handler (router request)]
+      (handler request))))
 
 (defn -main
   [& _args]
-  (system/start-server! (wrap-router echo-handler)))
+  (system/start-server! (wrap-router router/router)))
 
 (comment
-  (system/start-server! (wrap-router #'echo-handler))
+  (system/start-server! (wrap-router router/router))
   (system/stop-server!)
 
   (require 'clojure.reflect)
