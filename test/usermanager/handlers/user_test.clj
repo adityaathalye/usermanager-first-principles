@@ -11,9 +11,25 @@
     (let [base-uri (.toString (.getURI (system/get-state ::server)))]
       (is (= {:status 200
               :headers {"Content-Type" "text/plain;charset=utf-8"
-                        "UM-Message" "Welcome to the User Manager application demo! This is a first principles version of searncorfield/usermanager-example."}
+                        "UM-Message"
+                        (str "Welcome to the User Manager application demo!"
+                             " "
+                             "This is a first principles version of searncorfield/usermanager-example.")}
               :body "echoing METHOD :get for PATH /"}
              (-> (http/get base-uri)
+                 (select-keys [:status :body :headers])
+                 (update :headers (fn [{:strs [Content-Type UM-Message]}]
+                                    {"Content-Type" Content-Type
+                                     "UM-Message" UM-Message}))))))))
+
+(deftest reset-route-message-test
+  (testing "Testing that the reset route injects a message in params."
+    (let [base-uri (.toString (.getURI (system/get-state ::server)))]
+      (is (= {:status 200
+              :headers {"Content-Type" "text/plain;charset=utf-8"
+                        "UM-Message" "The change tracker has been reset to 0."}
+              :body "echoing METHOD :get for PATH /reset"}
+             (-> (http/get (str base-uri "/reset"))
                  (select-keys [:status :body :headers])
                  (update :headers (fn [{:strs [Content-Type UM-Message]}]
                                     {"Content-Type" Content-Type
