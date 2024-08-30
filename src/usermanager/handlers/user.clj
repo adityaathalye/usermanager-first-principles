@@ -5,11 +5,17 @@
 
 (defn echo
   [request]
-  (-> (format "echoing METHOD %s for PATH %s"
-           (:request-method request)
-           (:uri request))
-      (resp/response)
-      (resp/content-type "text/plain;charset=utf-8")))
+  (let [message (get-in request [:params :message])
+        maybe-message-header (fn [resp]
+                               (if message
+                                 (resp/header resp "UM-Message" message)
+                                 resp))]
+    (-> (format "echoing METHOD %s for PATH %s"
+                (:request-method request)
+                (:uri request))
+        (resp/response)
+        (resp/content-type "text/plain;charset=utf-8")
+        (maybe-message-header))))
 
 (defn not-found
   [_request]
@@ -39,6 +45,10 @@
                                          (assoc data :body [:safe html])))
         (resp/content-type "text/html"))))
 
+(comment
+  (render-page {:request-method :get :uri "/"})
+  )
+
 (defn reset-changes
   [req]
   (reset! changes 0)
@@ -47,8 +57,8 @@
 (defn default
   [req]
   (assoc-in req [:params :message]
-                (str "Welcome to the User Manager application demo! "
-                     "This uses just Compojure, Ring, and Selmer.")))
+            (str "Welcome to the User Manager application demo! "
+                 "This is a first principles version of searncorfield/usermanager-example.")))
 
 (defn delete-by-id
   "Compojure has already coerced the :id parameter to an int."

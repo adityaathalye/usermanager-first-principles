@@ -17,7 +17,7 @@
                  (select-keys [:status :body :headers])
                  (update :headers (fn [{:strs [Content-Type]}]
                                     {"Content-Type" Content-Type}))))
-          "Server echoes back request information in body.")
+          "Server echoes back information about request method and uri.")
       (is (= {:status 404
               :body "Not Found."}
              (-> (http/post base-uri {:throw-exceptions false})

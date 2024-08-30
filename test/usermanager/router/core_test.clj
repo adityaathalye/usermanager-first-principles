@@ -14,7 +14,12 @@
     (are [route-call response] (= route-call response)
 
       (handle {:request-method :get :uri "/"})
-      (tu/echo-response :get "/")
+      {:status 200,
+       :headers
+       {"Content-Type" "text/plain;charset=utf-8",
+        "UM-Message"
+        "Welcome to the User Manager application demo! This is a first principles version of searncorfield/usermanager-example."},
+       :body "echoing METHOD :get for PATH /"}
 
       (handle {:request-method :post :uri "/"})
       tu/not-found-response
