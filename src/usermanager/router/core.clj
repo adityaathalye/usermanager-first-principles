@@ -58,14 +58,15 @@
   (comp handlers/echo handlers/reset-changes))
 
 (comment
-  (require 'usermanager.main)
 
-  (router usermanager.main/echo-handler
-          {:request-method :get :uri "/"})
+  (defn handle
+    [request]
+    (let [handler (router request)]
+      (handler request)))
 
-  (router usermanager.main/echo-handler
-          {:request-method :delete :uri "/user/delete/42"})
+  (handle {:request-method :get :uri "/"})
 
-  (router usermanager.main/echo-handler
-          {:request-method :post :uri "/"})
+  (handle {:request-method :delete :uri "/user/delete/42"})
+
+  (handle {:request-method :post :uri "/"})
   )

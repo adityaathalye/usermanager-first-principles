@@ -10,7 +10,9 @@
                             :join? false}
                    :state nil}
          ::db {:config {:dbtype "sqlite" :dbname "dev/usermanager_dev_db.sqlite3"}
-               :state nil}}))
+               :state nil}
+         ::middleware {:config {:stack []}
+                       :state nil}}))
 
 (defn- update-system!
   [key-path v]
@@ -84,7 +86,46 @@
   ([db-key]
    (set-state! db-key nil)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Middleware configuration utilities
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn wrap-middleware
+  ([handler]
+   (wrap-middleware handler ::middleware))
+  ([handler middleware-key]
+   (let [composed-middleware (get-state middleware-key)]
+     (composed-middleware handler))))
+
+(defn start-middleware-stack!
+  ([]
+   (start-middleware-stack! ::middleware))
+  ([middleware-key]
+   (when-not (get-state middleware-key)
+     (let [middleware-stack (:stack (get-config middleware-key))]
+       (set-state! middleware-key
+                   (apply comp (reverse middleware-stack)))))))
+
 (comment
+
+  (do
+    (def dummy-handler identity)
+
+    ;; Middleware must be applied in correct order of dependency
+    (defn wrap-inc [h] (fn [req] (inc (h req))))
+    (defn wrap-str [h] (fn [req] (str (h req))))
+    (defn wrap-vec [h] (fn [req] (vec (h req))))
+
+    (let [composed-middleware
+          (apply comp
+                 (reverse [wrap-inc    ; 0th middleware wrapped first
+                           wrap-str    ; 1st middleware wrapped next
+                           wrap-vec])) ; 2nd middleware wrapped last
+
+          wrapped-handler
+          (composed-middleware dummy-handler)]
+      (wrapped-handler 42)))
+
   global-system
 
   (set-state! ::server :foo)
