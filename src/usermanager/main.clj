@@ -6,8 +6,10 @@
 
 (defn wrap-router
   [router]
+  (system/start-middleware-stack!)
   (fn [request]
-    (let [handler (router request)]
+    (let [routes->handler (router request)
+          handler (system/wrap-middleware routes->handler)]
       (handler request))))
 
 (defn -main
@@ -18,6 +20,7 @@
   (system/start-server! (wrap-router router/router))
   (system/stop-server!)
 
+  system/global-system
   (require 'clojure.reflect)
   (clojure.reflect/reflect (::system/server @system/global-system))
   )
