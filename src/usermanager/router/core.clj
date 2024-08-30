@@ -55,7 +55,7 @@
 
 (defmethod router [:get "/reset"]
   [_]
-  handlers/echo)
+  (comp handlers/echo handlers/reset-changes))
 
 (comment
   (require 'usermanager.main)

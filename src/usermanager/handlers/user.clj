@@ -52,7 +52,8 @@
 (defn reset-changes
   [req]
   (reset! changes 0)
-  (assoc-in req [:params :message] "The change tracker has been reset."))
+  (assoc-in req [:params :message] (format "The change tracker has been reset to %s."
+                                           @changes)))
 
 (defn default
   [req]
