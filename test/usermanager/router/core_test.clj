@@ -55,7 +55,6 @@
 
         (handle {:request-method :get
                  :uri "/user/form/1"
-                 :params {:id 1}
                  :application/component {:database db}})
         {:request-method :get,
          :uri "/user/form/1",
@@ -132,7 +131,6 @@
       ;; 3. DELETE
       (handle {:request-method :delete
                :uri "/user/delete/2"
-               :params {:id 2}
                :application/component {:database db}})
       {:status 303
        :headers

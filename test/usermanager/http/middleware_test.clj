@@ -39,4 +39,10 @@
                    db (get-in response [:application/component :database])]
                (db))
              (system/get-state ::db))
-          "Wrap db injects the database into the request's component context."))))
+          "Wrap db injects the database into the request's component context.")
+      (is (= (let [uri-prefix "/some/prefix/path/"
+                   test-id 1337
+                   uri (str uri-prefix test-id)
+                   handler (middleware/wrap-route-id-params identity uri-prefix)]
+               (handler {:uri uri}))
+             {:uri "/some/prefix/path/1337" :params {:id 1337}})))))
