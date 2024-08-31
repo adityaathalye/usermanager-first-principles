@@ -35,7 +35,7 @@
 
 (defmethod router [:delete "/user/delete/:id"]
   [_]
-  handlers/echo)
+  handlers/delete-by-id)
 
 (defmethod router [:get "/user/form"]
   [_]
