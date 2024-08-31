@@ -31,7 +31,7 @@
 
 (defmethod router [:get "/"]
   [_]
-  (comp handlers/echo handlers/default))
+  handlers/default)
 
 (defmethod router [:delete "/user/delete/:id"]
   [_]
@@ -55,7 +55,7 @@
 
 (defmethod router [:get "/reset"]
   [_]
-  (comp handlers/echo handlers/reset-changes))
+  handlers/reset-changes)
 
 (comment
 

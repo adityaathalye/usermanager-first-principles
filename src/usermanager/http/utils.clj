@@ -5,10 +5,6 @@
   [response status-code]
   (assoc response :status status-code))
 
-(defn status?
-  [{:keys [status] :as _response}]
-  (and status (< 99 status 600)))
-
 (defn header
   [response header-name header-value]
   (assoc-in response [:headers header-name] header-value))
@@ -20,11 +16,19 @@
 (defn response
   "Skeleton response with status 200 OK."
   ([body]
-   (response body nil))
-  ([body & headers]
+   (response body {}))
+  ([body headers]
    {:status 200
-    :headers (into {} headers)
+    :headers headers
     :body body}))
+
+(defn response?
+  "Pinched from Ring utilities. True if the supplied value
+  is a valid response map."
+  [resp]
+  (and (map? resp)
+       (integer? (:status resp))
+       (map? (:headers resp))))
 
 (defn not-found
   [body]

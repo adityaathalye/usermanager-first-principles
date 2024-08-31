@@ -5,17 +5,11 @@
 
 (defn echo
   [request]
-  (let [message (get-in request [:params :message])
-        maybe-message-header (fn [resp]
-                               (if message
-                                 (resp/header resp "UM-Message" message)
-                                 resp))]
-    (-> (format "echoing METHOD %s for PATH %s"
-                (:request-method request)
-                (:uri request))
-        (resp/response)
-        (resp/content-type "text/plain;charset=utf-8")
-        (maybe-message-header))))
+  (-> (format "echoing METHOD %s for PATH %s"
+              (:request-method request)
+              (:uri request))
+      (resp/response (:headers request))
+      (resp/content-type "text/plain;charset=utf-8")))
 
 (defn not-found
   [_request]
@@ -42,7 +36,7 @@
         ;; html (tmpl/render-file (str "views/user/" view ".html") data)
         ]
     (-> (resp/response data #_(tmpl/render-file "layouts/default.html"
-                                         (assoc data :body [:safe html])))
+                                                (assoc data :body [:safe html])))
         (resp/content-type "text/html"))))
 
 (comment
