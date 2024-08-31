@@ -47,7 +47,7 @@
 
 (defmethod router [:get "/user/list"]
   [_]
-  handlers/echo)
+  handlers/get-users)
 
 (defmethod router [:post "/user/save"]
   [_]
