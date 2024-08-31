@@ -1,7 +1,11 @@
 (ns usermanager.http.middleware-test
   (:require
-   [clojure.test :as t :refer [deftest is testing]]
-   [usermanager.http.middleware :as middleware]))
+   [clojure.test :as t :refer [deftest is testing use-fixtures]]
+   [usermanager.http.middleware :as middleware]
+   [usermanager.test-utilities :as tu]
+   [usermanager.system.core :as system]))
+
+(use-fixtures :once (partial tu/with-test-db ::db))
 
 (deftest middleware-test
   (testing "Middleware functionality"
@@ -29,4 +33,10 @@
               :headers
               {"UM-Message" message, "Content-Type" "text/plain;charset=utf-8"},
               :body "echoing METHOD :get for PATH /"})
-          "Echo middleware composes with message params middleware."))))
+          "Echo middleware composes with message params middleware.")
+      (is (= (let [handler (middleware/wrap-db identity ::db)
+                   response (handler {:request-method :get :uri "/"})
+                   db (get-in response [:application/component :database])]
+               (db))
+             (system/get-state ::db))
+          "Wrap db injects the database into the request's component context."))))
