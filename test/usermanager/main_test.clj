@@ -3,9 +3,15 @@
    [clj-http.client :as http]
    [clojure.test :as t :refer [deftest is testing]]
    [usermanager.system.core :as system]
+   [usermanager.http.middleware :as middleware]
    [usermanager.test-utilities :as tu]))
 
-(t/use-fixtures :once (partial tu/setup-teardown-server! ::server))
+(t/use-fixtures :once
+  (partial tu/setup-teardown-server!
+           {:server-key ::server
+            :middleware-key ::middleware
+            :middleware-stack [middleware/wrap-message-param-in-response-header
+                               middleware/wrap-echo]}))
 
 (deftest a-simple-server-test
   (testing "A simple server test."

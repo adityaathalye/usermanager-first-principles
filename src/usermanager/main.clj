@@ -5,18 +5,22 @@
    [usermanager.system.core :as system]))
 
 (defn wrap-router
-  [router]
-  (system/start-middleware-stack!)
+  [router & middleware-key]
+  (apply system/start-middleware-stack! middleware-key)
   (fn [request]
-    (let [routes->handler (router request)
-          handler (system/wrap-middleware routes->handler)]
-      (handler request))))
+    (let [request-handler (router request)
+          app-handler (apply system/wrap-middleware
+                             request-handler
+                             middleware-key)]
+      (app-handler request))))
 
 (defn -main
   [& _args]
+  (system/start-middleware-stack!)
   (system/start-server! (wrap-router router/router)))
 
 (comment
+  (system/start-middleware-stack!)
   (system/start-server! (wrap-router router/router))
   (system/stop-server!)
 

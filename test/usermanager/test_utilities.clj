@@ -20,20 +20,28 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn setup-teardown-server!
-  [server-key f]
+  [{:keys [server-key config middleware-key middleware-stack]
+    :or {server-key ::server
+         middleware-key ::middleware
+         middleware-stack []} :as settings}
+   f]
+  (let [config (merge {:port (get-free-port!) :join? false}
+                      config)]
+    (println "Setting up component:" server-key)
+    (println "With settings:" settings)
+    (system/set-config! server-key config)
+    (system/set-config! middleware-key {:stack middleware-stack})
+    (system/start-middleware-stack! middleware-key)
+    (system/start-server!
+     (um/wrap-router router/router middleware-key) server-key)
 
-  (println "Setting up component:" server-key)
-  (system/set-config!
-   server-key {:port (get-free-port!) :join? false})
-  (system/start-server!
-   (um/wrap-router router/router) server-key)
+    (println "Running test with config:" (system/get-config server-key))
+    (f)
 
-  (println "Running test with config:" (system/get-config server-key))
-  (f)
-
-  (system/stop-server! server-key)
-  (system/evict-component! server-key)
-  (println "Stopped and evicted component:" server-key))
+    (system/stop-server! server-key)
+    (system/evict-component! server-key)
+    (system/evict-component! middleware-key)
+    (println "Stopped and evicted components:" server-key middleware-key)))
 
 (defn with-test-db
   [db-key f]

@@ -14,12 +14,12 @@
     (are [route-call response] (= route-call response)
 
       (handle {:request-method :get :uri "/"})
-      {:status 200,
-       :headers
-       {"Content-Type" "text/plain;charset=utf-8",
-        "UM-Message"
-        "Welcome to the User Manager application demo! This is a first principles version of searncorfield/usermanager-example."},
-       :body "echoing METHOD :get for PATH /"}
+      {:request-method :get,
+       :uri "/",
+       :params {:message
+                (str "Welcome to the User Manager application demo! "
+                     "This is a first principles version of "
+                     "searncorfield/usermanager-example.")}}
 
       (handle {:request-method :post :uri "/"})
       tu/not-found-response
@@ -43,4 +43,9 @@
       tu/not-found-response
 
       (handle {:request-method :form :uri "/user/form/NAN"})
-      tu/not-found-response)))
+      tu/not-found-response
+
+      (handle {:request-method :get :uri "/reset"})
+      {:request-method :get,
+       :uri "/reset",
+       :params {:message "The change tracker has been reset to 0."}})))
