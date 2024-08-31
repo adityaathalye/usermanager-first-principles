@@ -39,11 +39,11 @@
 
 (defmethod router [:get "/user/form"]
   [_]
-  handlers/echo)
+  handlers/edit)
 
 (defmethod router [:get "/user/form/:id"]
   [_]
-  handlers/echo)
+  handlers/edit)
 
 (defmethod router [:get "/user/list"]
   [_]
@@ -51,7 +51,7 @@
 
 (defmethod router [:post "/user/save"]
   [_]
-  handlers/echo)
+  handlers/save)
 
 (defmethod router [:get "/reset"]
   [_]
