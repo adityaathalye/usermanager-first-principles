@@ -32,7 +32,29 @@
                              (system/get-db db-key))]
        (handler request)))))
 
+(defn wrap-route-id-params
+  [handler uri-static-prefix-with-slash]
+  (fn [request]
+    (let [uri (:uri request)
+          pattern (re-pattern (str uri-static-prefix-with-slash "(\\d+)"))
+          [_uri id] (re-find pattern uri)]
+      (if id
+        (-> request
+            (assoc-in [:params :id] (Integer/parseInt id))
+            (handler))
+        (handler request)))))
+
 (comment
+  (let [pattern (re-pattern (str "/user/delete" "/(\\d+)"))]
+    (re-find pattern "/user/delete/1" ))
+  )
+
+(comment
+  ((wrap-route-id-params
+    identity
+    "/some/prefix/path/")
+   {:uri "/some/prefix/path/1337"})
+
   ((wrap-message-param-in-response-header
     identity) {:params {:message :hello}})
 

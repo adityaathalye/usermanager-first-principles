@@ -1,6 +1,7 @@
 (ns usermanager.router.core
   (:require [clojure.string :as s]
-            [usermanager.handlers.user :as handlers]))
+            [usermanager.handlers.user :as handlers]
+            [usermanager.http.middleware :as middleware]))
 
 ;; Routes as of this commit from seancorfield/usermanager-example:
 ;; https://github.com/seancorfield/usermanager-example/blob/2a9cf635cf255bf223486bc9e907a02435c7201c/src/usermanager/main.clj#L113
@@ -35,7 +36,9 @@
 
 (defmethod router [:delete "/user/delete/:id"]
   [_]
-  handlers/delete-by-id)
+  (middleware/wrap-route-id-params
+   handlers/delete-by-id
+   "/user/delete/"))
 
 (defmethod router [:get "/user/form"]
   [_]
@@ -43,7 +46,9 @@
 
 (defmethod router [:get "/user/form/:id"]
   [_]
-  handlers/edit)
+  (middleware/wrap-route-id-params
+   handlers/edit
+   "/user/form/"))
 
 (defmethod router [:get "/user/list"]
   [_]
@@ -66,7 +71,15 @@
 
   (handle {:request-method :get :uri "/"})
 
-  (handle {:request-method :delete :uri "/user/delete/42"})
+  (do
+    #_(deref usermanager.system.core/global-system)
+
+    (usermanager.system.core/start-db!
+     usermanager.model.user-manager/populate)
+
+    (handle {:request-method :delete
+             :uri "/user/delete/42"
+             :application/component {:database (usermanager.system.core/get-db)}}))
 
   (handle {:request-method :post :uri "/"})
   )
