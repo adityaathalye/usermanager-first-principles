@@ -1,6 +1,8 @@
 (ns usermanager.system.core
-  (:require [ring.adapter.jetty :as adapter]
-            [next.jdbc :as jdbc]))
+  (:require
+   [usermanager.http.middleware :as middleware]
+   [ring.adapter.jetty :as adapter]
+   [next.jdbc :as jdbc]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Abstract system utilities
@@ -11,7 +13,7 @@
                    :state nil}
          ::db {:config {:dbtype "sqlite" :dbname "dev/usermanager_dev_db.sqlite3"}
                :state nil}
-         ::middleware {:config {:stack []}
+         ::middleware {:config {:stack [middleware/wrap-db]}
                        :state nil}}))
 
 (defn- update-system!
