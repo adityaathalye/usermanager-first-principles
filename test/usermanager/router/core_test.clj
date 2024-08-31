@@ -1,8 +1,11 @@
 (ns usermanager.router.core-test
   (:require
-   [clojure.test :refer [are deftest testing]]
+   [clojure.test :refer [are deftest testing use-fixtures]]
    [usermanager.router.core :as urc]
-   [usermanager.test-utilities :as tu]))
+   [usermanager.test-utilities :as tu]
+   [usermanager.system.core :as system]))
+
+(use-fixtures :once (partial tu/with-test-db ::db))
 
 (defn handle
   [request]
@@ -27,8 +30,13 @@
       (handle {:request-method :post :uri "/does/not/exist"})
       tu/not-found-response
 
-      (handle {:request-method :delete :uri "/user/delete/42"})
-      (tu/echo-response :delete "/user/delete/42")
+      (handle {:request-method :delete
+               :uri "/user/delete/42"
+               :params {:id 1} ; We assume setup creates at least one user
+               :application/component {:database (system/get-db ::db)}})
+      {:status 303
+       :headers
+       {"Location" "/user/list"}, :body ""}
 
       (handle {:request-method :post :uri "/user/delete/42"})
       tu/not-found-response
