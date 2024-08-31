@@ -58,8 +58,11 @@
     (system/stop-db! db-key)
     (system/evict-component! db-key)
     (println "Stopped and evicted component:" db-key)
-    (io/delete-file dbname)
-    (println "Deleted SQLite test DB:" dbname)))
+
+    (try (io/delete-file dbname)
+         (catch java.io.IOException e
+           (println (ex-message e)))
+         (finally (println "Deleted SQLite test DB:" dbname)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; HTTP utils
