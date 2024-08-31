@@ -5,7 +5,7 @@
    [usermanager.test-utilities :as tu]
    [usermanager.system.core :as system]))
 
-(use-fixtures :once (partial tu/with-test-db ::db))
+(use-fixtures :each (partial tu/with-test-db ::db))
 
 (defn handle
   [request]
@@ -30,14 +30,6 @@
       (handle {:request-method :post :uri "/does/not/exist"})
       tu/not-found-response
 
-      (handle {:request-method :delete
-               :uri "/user/delete/42"
-               :params {:id 1} ; We assume setup creates at least one user
-               :application/component {:database (system/get-db ::db)}})
-      {:status 303
-       :headers
-       {"Location" "/user/list"}, :body ""}
-
       (handle {:request-method :post :uri "/user/delete/42"})
       tu/not-found-response
 
@@ -57,3 +49,46 @@
       {:request-method :get,
        :uri "/reset",
        :params {:message "The change tracker has been reset to 0."}})))
+
+(deftest successive-list-delete-list-route-calls-test
+  (let [db (system/get-db ::db)]
+    (testing "Whether successive list -> delete -> list behaves as expected."
+      (are [route-call response] (= route-call response)
+
+        ;; LIST fresh DB with only one user
+        (handle {:request-method :get
+                 :uri "/user/list"
+                 :application/component {:database db}})
+        {:request-method :get,
+         :uri "/user/list",
+         :application/component
+         {:database db},
+         :params
+         {:users
+          [{:addressbook/id 1,
+            :addressbook/first_name "Sean",
+            :addressbook/last_name "Corfield",
+            :addressbook/email "sean@worldsingles.com",
+            :addressbook/department_id 4,
+            :department/name "Development"}]},
+         :application/view "list"}
+
+        ;; Delete the lone user
+        (handle {:request-method :delete
+                 :uri "/user/delete/42"
+                 :params {:id 1} ; We assume setup creates at least one user
+                 :application/component {:database db}})
+        {:status 303
+         :headers
+         {"Location" "/user/list"}, :body ""}
+
+        ;; LIST db again to fetch nobody
+        (handle {:request-method :get
+                 :uri "/user/list"
+                 :application/component {:database db}})
+        {:request-method :get,
+         :uri "/user/list",
+         :application/component
+         {:database db},
+         :params {:users []},
+         :application/view "list"}))))
