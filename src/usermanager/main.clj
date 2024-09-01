@@ -29,10 +29,13 @@
   (system/start-server! (wrap-router router/router)))
 
 (comment
-  (do
+  (let [dev-db-file "dev/usermanager_dev_db.sqlite3"]
+    (require 'clojure.java.io)
     (system/stop-server!)
     (system/stop-db!)
+    (clojure.java.io/delete-file dev-db-file)
     (system/evict-component! ::system/middleware)
+    (system/set-config! ::system/db {:dbtype "sqlite" :dbname dev-db-file})
     (system/start-db! model/populate)
     (system/start-server! (wrap-router router/router)))
 
