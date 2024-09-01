@@ -1,7 +1,8 @@
 (ns usermanager.handlers.user
   (:require [usermanager.model.user-manager :as model]
             [usermanager.http.utils :as resp]
-            #_[selmer.parser :as tmpl]))
+            [usermanager.layouts.core :as ulc]
+            [hiccup.page :as hp]))
 
 (defn echo
   [request]
@@ -31,12 +32,12 @@
   us to put the rendering logic in one place instead of repeating it
   for every handler."
   [req]
-  (let [data (assoc (:params req) :changes @changes)
-        ;; view (:application/view req "default")
-        ;; html (tmpl/render-file (str "views/user/" view ".html") data)
-        ]
-    (-> (resp/response data #_(tmpl/render-file "layouts/default.html"
-                                                (assoc data :body [:safe html])))
+  (let [req (assoc-in req [:params :changes] @changes)]
+    (-> req
+        (ulc/hydrate-view)
+        (hp/html5)
+        (str)
+        (resp/response)
         (resp/content-type "text/html"))))
 
 (comment

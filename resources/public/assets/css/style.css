@@ -1,0 +1,56 @@
+:root {
+    font-family: -apple-system, BlinkMacSystemFont, avenir next,
+                 avenir, segoe ui, helvetica neue, helvetica, Cantarell,
+                 Ubuntu, roboto, noto, arial, sans-serif;
+    line-height: 1.5rem;
+    font-size: 1rem;
+    --max-width: 72ch;
+}
+
+* {
+  max-width: var(--max-width);
+}
+
+html, body, div, header, main {
+ max-width: none;
+}
+
+nav {
+    display: flex;
+    gap: 1rem;
+    list-style-type: none;
+}
+
+table {
+  table-layout: fixed;
+  border-collapse: collapse;
+  text-align: left;
+  border: thin dashed;
+}
+
+th, td  {
+  padding: 1ch;
+  border: thin dashed;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.stack > * {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.stack > * + * {
+  margin-top: 1em;
+}
+
+.center {
+  box-sizing: content-box;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: var(--max-width);
+}
