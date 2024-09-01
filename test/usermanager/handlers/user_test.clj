@@ -57,5 +57,5 @@
       (is (= {:status 200
               :trace-redirects [(str base-uri "user/list")]
               :body ""}
-             (-> (http/delete (str base-uri "user/delete/42"))
+             (-> (http/get (str base-uri "user/delete/42"))
                  (select-keys [:status :body :trace-redirects])))))))
