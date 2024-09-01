@@ -44,6 +44,14 @@
             (handler))
         (handler request)))))
 
+(defn wrap-render-page
+  [handler]
+  (fn [request]
+    (let [context (handler request)]
+      (if (resp/response? context)
+        context
+        (handlers/render-page context)))))
+
 (comment
   (let [pattern (re-pattern (str "/user/delete" "/(\\d+)"))]
     (re-find pattern "/user/delete/1" ))
