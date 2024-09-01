@@ -129,7 +129,7 @@
        :application/view "list"}
 
       ;; 3. DELETE
-      (handle {:request-method :delete
+      (handle {:request-method :get
                :uri "/user/delete/2"
                :application/component {:database db}})
       {:status 303
@@ -190,7 +190,7 @@
          :application/view "list"}
 
         ;; Delete the lone user
-        (handle {:request-method :delete
+        (handle {:request-method :get
                  :uri "/user/delete/1"
                  :params {:id 1} ; We assume setup creates at least one user
                  :application/component {:database db}})

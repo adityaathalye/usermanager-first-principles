@@ -34,7 +34,7 @@
   [_]
   handlers/default)
 
-(defmethod router [:delete "/user/delete/:id"]
+(defmethod router [:get "/user/delete/:id"]
   [_]
   (middleware/wrap-route-id-params
    handlers/delete-by-id

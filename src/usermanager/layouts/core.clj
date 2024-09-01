@@ -71,9 +71,9 @@
                  [:tr (for [field [id name email department action]]
                         [:td field])]))
              users)
-        [:tr [:td {:colspan (count table-headers)}]
-         "No users exist but "
-         [:a {:href "/user/form"} "new ones can be added"]"."])]]))
+        (list [:tr [:td {:colspan (count table-headers)}
+                    "No users exist but "
+                    [:a {:href "/user/form"} "new ones can be added"] "."]]))]]))
 
 (def uri->page-name
   {"/" "Home"
