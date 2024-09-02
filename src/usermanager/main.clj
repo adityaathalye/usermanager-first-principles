@@ -1,13 +1,18 @@
 (ns usermanager.main
   (:gen-class)
   (:require
+   [ring.middleware.params :as params-middleware]
+   [ring.middleware.keyword-params :as keyword-params-middleware]
    [usermanager.router.core :as router]
    [usermanager.system.core :as system]
    [usermanager.http.middleware :as middleware]
    [usermanager.model.user-manager :as model]))
 
-(def middleware-stack [middleware/wrap-db
-                       middleware/wrap-render-page])
+(def middleware-stack
+  [keyword-params-middleware/wrap-keyword-params
+   params-middleware/wrap-params
+   middleware/wrap-db
+   middleware/wrap-render-page])
 
 (defn wrap-router
   ([router]

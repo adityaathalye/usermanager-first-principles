@@ -1,5 +1,6 @@
 (ns usermanager.layouts.core
-  (:require [hiccup.page :as hp]))
+  (:require [hiccup.page :as hp]
+            [hiccup.form :as form]))
 
 (def css (slurp "resources/public/assets/css/style.css"))
 
@@ -75,6 +76,41 @@
                     "No users exist but "
                     [:a {:href "/user/form"} "new ones can be added"] "."]]))]]))
 
+(defn user-info-form
+  [{:addressbook/keys [id first_name last_name email department_id]
+    :as _user}
+   departments]
+  (form/form-to
+   {:class "stack"} [:post "/user/save"]
+
+   (form/hidden-field {:id id} "id" id)
+
+   [:div {:class "cluster"}
+    (form/label "first_name" "First Name:")
+    (form/text-field {:id "first_name" :value first_name}
+                     "first_name" first_name)]
+
+   [:div {:class "cluster"}
+    (form/label "last_name" "Last Name:")
+    (form/text-field {:id "last_name" :value last_name}
+                     "last_name" last_name)]
+
+   [:div {:class "cluster"}
+    (form/label "email" "Email:")
+    (form/text-field {:id "email" :value email}
+                     "email" email)]
+
+   [:div {:class "cluster"}
+    (form/label "department_id" "Department Id:")
+    [:select {:name "department_id" :id "department_id"}
+     (form/select-options
+      (for [{:department/keys [name id]} departments]
+        [name id])
+      department_id)]]
+
+   [:div
+    (form/submit-button "Save User")]))
+
 (def uri->page-name
   {"/" "Home"
    "/user/list" "List users"
@@ -97,7 +133,15 @@
   [{:keys [params] :as request}]
   (-> request
       (assoc-in [:params :content] (users-table (:users params)))
-      (assoc-in [:params :page-name] "List Users")
+      (assoc :application/view :default)
+      (hydrate-view)))
+
+(defmethod hydrate-view "form"
+  [{:keys [params] :as request}]
+  (-> request
+      (assoc-in [:params :content]
+                (user-info-form (:user params)
+                                (:departments params)))
       (assoc :application/view :default)
       (hydrate-view)))
 
@@ -109,6 +153,16 @@
      :addressbook/email "sean@worldsingles.com",
      :addressbook/department_id 4,
      :department/name "Development"}])
+
+  (user-info-form {:id 1,
+                   :first_name "Sean",
+                   :last_name "Corfield",
+                   :email "sean@worldsingles.com",
+                   :department_id 4,
+                   :department/name "Development"}
+                  [{:department/id 1 :department/name "foo"}
+                   {:department/id 2 :department/name "bar"}
+                   {:department/id 3 :department/name "baz"}])
 
   (hp/html5 (page-layout {:footer (page-footer 42)}))
   )
