@@ -30,7 +30,6 @@
 (defn -main
   [& _args]
   (system/start-db! model/populate)
-  (system/start-middleware-stack!)
   (system/start-server! (wrap-router router/router)))
 
 (comment
