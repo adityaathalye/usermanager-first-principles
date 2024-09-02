@@ -2,7 +2,9 @@
   (:require [hiccup.page :as hp]
             [hiccup.form :as form]))
 
-(def css (slurp "resources/public/assets/css/style.css"))
+(defn css
+  []
+  (slurp "resources/public/assets/css/style.css"))
 
 (defn page-head
   [page-name]
@@ -10,13 +12,13 @@
    [:meta {:charset  "utf-8"}]
    [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
    [:title (format "%s / %s" "User Manager" page-name)]
-   [:style css]])
+   [:style (css)]])
 
 (defn page-header
   [page-name]
   [:header {:id "site-header"}
    [:h2 "User Manager / " [:small [:small page-name]]]
-   [:nav {:class "cluster"}
+   [:nav #_{:class "cluster"}
     [:a {:href "/"} "Home"]
     [:a {:href "/user/list"
          :title "View the list of users"}
@@ -30,11 +32,11 @@
 
 (defn page-footer
   [changes]
-  [:footer {:id "site-footer"}
+  [:footer {:id "site-footer" :class "stack"}
    [:hr]
    (when changes
-     (format "You have made %s change(s) since the last reset!"
-             changes))])
+     [:p (format "You have made %s change(s) since the last reset!"
+                 changes)])])
 
 (defn page-layout
   [{:keys [page-name
@@ -108,8 +110,10 @@
         [name id])
       department_id)]]
 
-   [:div
-    (form/submit-button "Save User")]))
+   [:hr]
+   [:div {:class "cluster"}
+    (form/label "submit_button" "Add or Update user:")
+    (form/submit-button {:id "submit_button"} "Submit")]))
 
 (def uri->page-name
   {"/" "Home"
