@@ -12,25 +12,57 @@
 }
 
 html, body, div, header, main {
- max-width: none;
+    max-width: none;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+hr {
+    margin: 0;
+    border: none;
+    height: 0.2em;
+    background-color: black;
+}
+
+form hr {
+    height: 0.05em;
+    background-color: grey;
 }
 
 nav {
     display: flex;
-    gap: 1rem;
     list-style-type: none;
+    gap: 1rem;
 }
 
 table {
-  table-layout: fixed;
-  border-collapse: collapse;
-  text-align: left;
-  border: thin dashed;
+    overflow-x: auto;
+    max-width: 72ch;
+    table-layout: fixed;
+    border-collapse: collapse;
+    text-align: left;
+    border: thin dashed;
 }
 
 th, td  {
-  padding: 1ch;
+  padding: 0.5rem;
   border: thin dashed;
+}
+
+label, input, select, options {
+    min-width: 18ch;
+}
+
+input {
+    padding: 0.25em;
+    width: 30ch;
+}
+
+select, #submit_button {
+    padding: 0.25em;
+    width: 31ch;
 }
 
 .stack {
@@ -53,4 +85,12 @@ th, td  {
   margin-left: auto;
   margin-right: auto;
   max-width: var(--max-width);
+}
+
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+  justify-content: flex-start;
+  align-items: center;
 }
