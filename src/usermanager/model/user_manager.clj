@@ -3,7 +3,10 @@
 (ns usermanager.model.user-manager
   "The model for the application. This is where the persistence happens,
   although in a larger application, this would probably contain just the
-  business logic and the persistence would be in a separate namespace."
+  business logic and the persistence would be in a separate namespace.
+
+  Compare with seancorfield/usermanager-example
+  https://github.com/seancorfield/usermanager-example/blob/develop/src/usermanager/model/user_manager.clj"
   (:require [next.jdbc :as jdbc]
             [next.jdbc.sql :as sql]))
 

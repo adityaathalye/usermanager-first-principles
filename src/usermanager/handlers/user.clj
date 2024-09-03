@@ -1,4 +1,10 @@
+;; copyright (c) 2019-2023 Sean Corfield, all rights reserved
+
 (ns usermanager.handlers.user
+  "Compare with \"controllers\" from seancorfield/usermanager-example
+
+Ref: https://github.com/seancorfield/usermanager-example/blob/develop/src/usermanager/controllers/user.clj
+"
   (:require [usermanager.model.user-manager :as model]
             [usermanager.http.utils :as resp]
             [usermanager.layouts.core :as ulc]
@@ -15,12 +21,6 @@
 (defn not-found
   [_request]
   (resp/not-found "Not Found."))
-
-;; Handlers copied from seancorfield/usermanager-example
-;; ref: usermanager.controllers.user as of this commit
-;; https://github.com/seancorfield/usermanager-example/blob/2a9cf635cf255bf223486bc9e907a02435c7201c/src/usermanager/controllers/user.clj#L1
-
-;; copyright (c) 2019-2023 Sean Corfield, all rights reserved
 
 (def ^:private changes
   "Count the number of changes (since the last reload)."

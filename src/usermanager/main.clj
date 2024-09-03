@@ -1,4 +1,27 @@
 (ns usermanager.main
+  "Compare with seancorfield/usermanager-example
+  https://github.com/seancorfield/usermanager-example/blob/develop/src/usermanager/main.clj
+
+  This project is a \"from first principles\" variant of Sean's project
+  (synced as of commit SHA 2a9cf63).
+
+  It follows up the explanation laid out in Clojuring the web
+  application stack: Meditation One:
+  https://www.evalapply.org/posts/clojure-web-app-from-scratch/index.html.
+
+  If nothing else, it exists to scratch one's own itch.
+
+  Sean's repo references variants of the same basic \"User Manager\" web
+  application. All of these are built with libraries used by Clojure
+  professionals in production web apps.
+
+  This variant uses only a small fraction of those dependencies; bare
+  essentials like adapters for Jetty, SQLite, and HTML rendering. Also
+  some ring middleware that handles HTML form data. Everything else is
+  hand-rolled Clojure.
+
+  The resulting app is not fit for production deployment. Expose it to
+  the Public Internet only on a throway server instance."
   (:gen-class)
   (:require
    [ring.middleware.params :as params-middleware]
@@ -28,9 +51,23 @@
        (app-handler request)))))
 
 (defn -main
-  [& _args]
-  (system/start-db! model/populate)
-  (system/start-server! (wrap-router router/router)))
+  [& [port]]
+  (let [server-config (system/get-config ::system/server)
+        port (or port
+                 (get (System/getenv) "PORT")
+                 (get (system/get-config ::system/server)
+                      (:port server-config)
+                      3000))
+        port (if (string? port)
+               (Integer/parseInt port)
+               port)]
+    (println "Setting up DB having dbname: "
+             (:dbname (system/get-config ::system/db)))
+    (system/start-db! model/populate)
+    (println "Starting up Server on port: " port)
+    (system/set-config! ::system/server
+                        (assoc server-config :port port))
+    (system/start-server! (wrap-router router/router))))
 
 (comment
   (let [dev-db-file "dev/usermanager_dev_db.sqlite3"]

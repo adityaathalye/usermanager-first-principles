@@ -23,6 +23,7 @@
 *.jar
 *.swp
 *~
+*.sqlite3
 /checkouts
 /classes
 /target
