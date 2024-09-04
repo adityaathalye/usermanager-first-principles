@@ -34,6 +34,10 @@
   [_]
   handlers/default)
 
+;; NOTE: This is an ugly hack. GET is not
+;; meant to issue delete requests. If this
+;; annoys you, please review the reading
+;; guide in the README.
 (defmethod router [:get "/user/delete/:id"]
   [_]
   (middleware/wrap-route-id-params
